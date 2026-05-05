@@ -5,7 +5,7 @@ const Marquee = () => {
   const text = "GULEASR • SIGNATURE COLLECTION • FRAGRANCE BEYOND TIME • LUXURY PERFUMES • ";
   
   return (
-    <div className="w-full bg-primary text-background overflow-hidden py-4 border-y border-secondary/20 flex items-center mb-8">
+    <div className="w-full bg-primary text-background overflow-hidden py-4 border-y border-secondary/20 flex items-center mb-0 md:mb-8">
       <motion.div
         className="flex whitespace-nowrap"
         animate={{ x: ["0%", "-50%"] }}

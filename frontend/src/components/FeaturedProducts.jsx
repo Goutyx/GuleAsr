@@ -29,7 +29,7 @@ const FeaturedProducts = () => {
   return (
     <>
       {/* ── Horizontal Scroll Section ── */}
-      <section ref={targetRef} id="collections" className="relative h-[320vh] bg-background">
+      <section ref={targetRef} id="collections" className="relative h-[200vh] md:h-[320vh] bg-background">
         <div className="sticky top-0 flex h-screen items-center overflow-hidden">
         <motion.div style={{ x }} className="flex gap-4 md:gap-8 px-6 md:px-16 w-max">
             {/* Label card at front */}
@@ -78,7 +78,7 @@ const FeaturedProducts = () => {
       </section>
 
       {/* ── All Products Grid with Filters ── */}
-      <section className="py-16 md:py-24 px-4 md:px-8 max-w-[1800px] mx-auto">
+      <section className="pt-4 pb-16 md:py-24 px-4 md:px-8 max-w-[1800px] mx-auto">
         <div className="flex flex-col md:flex-row md:items-end justify-between gap-8 mb-12">
           <div>
             <h2 className="text-5xl md:text-6xl font-bold tracking-tighter text-primary mb-2">SHOP</h2>
@@ -103,7 +103,7 @@ const FeaturedProducts = () => {
           </div>
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-5">
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-5">
           {filtered.slice(0, 8).map((product, index) => (
             <motion.div
               key={product.id}
@@ -137,7 +137,7 @@ const FeaturedProducts = () => {
           ))}
         </div>
 
-        <div className="mt-16 flex justify-center">
+        <div className="mt-8 md:mt-16 flex justify-center">
           <Link
             to="/shop"
             className="group relative inline-flex items-center gap-4 px-12 py-5 bg-primary text-background overflow-hidden transition-all hover:pr-16"

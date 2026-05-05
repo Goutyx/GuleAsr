@@ -33,7 +33,7 @@ const Hero = () => {
   };
 
   return (
-    <section className="pt-20 md:pt-24 px-4 md:px-8 pb-8 min-h-screen flex flex-col max-w-[1800px] mx-auto">
+    <section className="pt-20 md:pt-24 px-4 md:px-8 pb-0 md:pb-8 min-h-screen flex flex-col max-w-[1800px] mx-auto">
       <div className="flex-1 vexo-card relative flex flex-col lg:flex-row overflow-hidden">
         
         {/* Left Content Area */}
