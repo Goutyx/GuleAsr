@@ -41,7 +41,7 @@ const BannerSection = () => {
       style={{
         position: 'relative',
         width: '100%',
-        minHeight: '90vh',
+        minHeight: 'clamp(500px, 70vh, 90vh)',
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
@@ -117,8 +117,8 @@ const BannerSection = () => {
             textTransform: 'uppercase',
             fontWeight: 700,
             color: 'rgba(255,255,255,0.5)',
-            marginBottom: '2rem',
-            marginTop: '2rem',
+            marginBottom: '1rem',
+            marginTop: '1rem',
           }}
         >
           The GuleAsr Story

@@ -66,7 +66,7 @@ const Stars = ({ n }) => (
 
 const Reviews = () => {
   return (
-    <section className="py-28 bg-surface overflow-hidden">
+    <section className="py-12 md:py-28 bg-surface overflow-hidden">
       <div className="px-4 md:px-8 max-w-[1800px] mx-auto mb-14">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
