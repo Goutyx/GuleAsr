@@ -1,0 +1,28 @@
+{
+  "name": "backend",
+  "version": "1.0.0",
+  "description": "GuleAsr backend API",
+  "main": "server.js",
+  "scripts": {
+    "dev": "node server.js",
+    "seed:products": "node scripts/seedProducts.js",
+    "test": "echo \"No tests configured\""
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "dependencies": {
+    "bcryptjs": "^3.0.2",
+    "cors": "^2.8.6",
+    "dotenv": "^17.4.2",
+    "express-async-handler": "^1.2.0",
+    "express-validator": "^7.3.0",
+    "express": "^5.2.1",
+    "helmet": "^8.1.0",
+    "jsonwebtoken": "^9.0.2",
+    "mongoose": "^9.6.1",
+    "morgan": "^1.10.1",
+    "razorpay": "^2.9.6"
+  }
+}

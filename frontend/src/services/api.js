@@ -1,0 +1,57 @@
+import axios from "axios";
+
+const api = axios.create({
+  baseURL: import.meta.env.VITE_API_URL || "http://localhost:5000/api",
+});
+
+api.interceptors.request.use((config) => {
+  const token = localStorage.getItem("guleasr_token");
+  if (token) {
+    config.headers.Authorization = `Bearer ${token}`;
+  }
+  return config;
+});
+
+export const authApi = {
+  register: (payload) => api.post("/auth/register", payload),
+  login: (payload) => api.post("/auth/login", payload),
+  me: () => api.get("/auth/me"),
+};
+
+export const productApi = {
+  list: (params) => api.get("/products", { params }),
+  getOne: (id) => api.get(`/products/${id}`),
+};
+
+export const cartApi = {
+  get: () => api.get("/cart"),
+  add: (productId, quantity = 1) => api.post("/cart", { productId, quantity }),
+  update: (productId, quantity) => api.put(`/cart/${productId}`, { quantity }),
+  remove: (productId) => api.delete(`/cart/${productId}`),
+};
+
+export const wishlistApi = {
+  get: () => api.get("/wishlist"),
+  toggle: (productId) => api.post("/wishlist/toggle", { productId }),
+};
+
+export const orderApi = {
+  create: (payload) => api.post("/orders", payload),
+  myOrders: () => api.get("/orders/my"),
+};
+
+export const paymentApi = {
+  createOrder: (amount) => api.post("/payments/create-order", { amount }),
+  verify: (payload) => api.post("/payments/verify", payload),
+};
+
+export const adminApi = {
+  stats: () => api.get("/admin/stats"),
+  users: () => api.get("/admin/users"),
+  orders: () => api.get("/orders"),
+  createProduct: (payload) => api.post("/products", payload),
+  updateProduct: (id, payload) => api.put(`/products/${id}`, payload),
+  deleteProduct: (id) => api.delete(`/products/${id}`),
+};
+
+export default api;
