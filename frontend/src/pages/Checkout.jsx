@@ -147,6 +147,7 @@ const Checkout = () => {
                 <input required type="text" placeholder="Address" value={formData.line1} onChange={(e) => setFormData((s) => ({ ...s, line1: e.target.value }))} className="col-span-2 p-4 bg-background border border-secondary/20 rounded-xl focus:outline-none focus:border-primary text-primary" />
                 <input required type="text" placeholder="City" value={formData.city} onChange={(e) => setFormData((s) => ({ ...s, city: e.target.value }))} className="col-span-1 p-4 bg-background border border-secondary/20 rounded-xl focus:outline-none focus:border-primary text-primary" />
                 <input required type="text" placeholder="Postal Code" value={formData.postalCode} onChange={(e) => setFormData((s) => ({ ...s, postalCode: e.target.value }))} className="col-span-1 p-4 bg-background border border-secondary/20 rounded-xl focus:outline-none focus:border-primary text-primary" />
+                <input required type="text" placeholder="State" value={formData.state} onChange={(e) => setFormData((s) => ({ ...s, state: e.target.value }))} className="col-span-2 p-4 bg-background border border-secondary/20 rounded-xl focus:outline-none focus:border-primary text-primary" />
               </div>
             </div>
 
