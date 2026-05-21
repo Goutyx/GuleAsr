@@ -18,14 +18,22 @@ api.interceptors.response.use(
   (response) => response,
   (error) => {
     if (error.response?.status === 401) {
-      // Token expired or invalid
-      localStorage.removeItem("guleasr_token");
-      localStorage.removeItem("guleasr_mock_session");
-      // Dispatch logout event that AuthContext can listen to
-      window.dispatchEvent(new CustomEvent("logout", { detail: { reason: "Token expired" } }));
-      if (!window.location.pathname.includes("/login")) {
-        toast.error("Session expired. Please login again.");
-        window.location.href = "/login";
+      // Only handle logout if there was a real token (not mock session)
+      const hasToken = localStorage.getItem("guleasr_token");
+      const hasMockSession = localStorage.getItem("guleasr_mock_session");
+      
+      if (hasToken) {
+        // Token expired or invalid - do full logout
+        localStorage.removeItem("guleasr_token");
+        localStorage.removeItem("guleasr_mock_session");
+        window.dispatchEvent(new CustomEvent("logout", { detail: { reason: "Token expired" } }));
+        if (!window.location.pathname.includes("/login")) {
+          toast.error("Session expired. Please login again.");
+          window.location.href = "/login";
+        }
+      } else if (hasMockSession) {
+        // In mock mode, just silently fail the request without logging out
+        // The AuthContext will handle the fallback to mock session
       }
     }
     return Promise.reject(error);
