@@ -2,13 +2,14 @@ import React, { useEffect, useMemo, useState } from 'react';
 import { motion } from 'framer-motion';
 import { Plus, Filter, X as CloseIcon } from 'lucide-react';
 import { useCart } from '../context/CartContext';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { productApi } from "../services/api";
 import { formatINR } from "../utils/currency";
 import { fallbackProducts, toCardProduct } from "../data/products";
 
 const Shop = () => {
   const { addToCart } = useCart();
+  const navigate = useNavigate();
   const [products, setProducts] = useState([]);
   const [category, setCategory] = useState("");
   const [family, setFamily] = useState("");
@@ -130,7 +131,10 @@ const Shop = () => {
                   <button 
                     onClick={(e) => {
                       e.preventDefault();
-                      addToCart(product);
+                      const success = addToCart(product);
+                      if (!success) {
+                        navigate("/login");
+                      }
                     }}
                     className="bg-primary text-background p-3 rounded-full hover:scale-95 transition-transform flex items-center justify-center shadow-xl"
                   >

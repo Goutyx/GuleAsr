@@ -2,7 +2,7 @@ import React, { useRef, useState } from 'react';
 import { motion, useScroll, useTransform } from 'framer-motion';
 import { Plus } from 'lucide-react';
 import { useCart } from '../context/CartContext';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { fallbackProducts, toCardProduct } from "../data/products";
 import { formatINR } from "../utils/currency";
 
@@ -13,6 +13,7 @@ const filters = ["All", "For Him", "For Her", "Unisex", "Floral", "Woody", "Fres
 const FeaturedProducts = () => {
   const targetRef = useRef(null);
   const { addToCart } = useCart();
+  const navigate = useNavigate();
   const [activeFilter, setActiveFilter] = useState("All");
 
   const { scrollYProgress } = useScroll({ target: targetRef });
@@ -57,7 +58,13 @@ const FeaturedProducts = () => {
                   />
                   <div className="absolute top-4 right-4 z-20">
                     <button
-                      onClick={(e) => { e.preventDefault(); addToCart(product); }}
+                      onClick={(e) => { 
+                        e.preventDefault(); 
+                        const success = addToCart(product);
+                        if (!success) {
+                          navigate("/login");
+                        }
+                      }}
                       className="bg-background text-primary p-2.5 sm:p-3 rounded-full shadow-lg hover:scale-95 transition-transform"
                     >
                       <Plus size={18} className="sm:w-5 sm:h-5" strokeWidth={2.5} />
@@ -121,7 +128,13 @@ const FeaturedProducts = () => {
                 />
                 <div className="absolute top-3 right-3 z-20">
                   <button
-                    onClick={(e) => { e.preventDefault(); addToCart(product); }}
+                    onClick={(e) => { 
+                      e.preventDefault(); 
+                      const success = addToCart(product);
+                      if (!success) {
+                        navigate("/login");
+                      }
+                    }}
                     className="bg-background text-primary p-2.5 rounded-full shadow-md hover:scale-95 transition-transform"
                   >
                     <Plus size={16} strokeWidth={2.5} />
