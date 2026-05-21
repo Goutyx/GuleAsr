@@ -57,7 +57,7 @@ const Checkout = () => {
       toast.error("Your cart is empty");
       return;
     }
-    if (!localStorage.getItem("guleasr_token")) {
+    if (!localStorage.getItem("guleasr_token") && !localStorage.getItem("guleasr_mock_session")) {
       toast.error("Please login before checkout");
       return;
     }
