@@ -1,12 +1,14 @@
 import React, { createContext, useState, useContext, useEffect } from 'react';
 import toast from "react-hot-toast";
 import { cartApi, wishlistApi } from "../services/api";
+import { useAuth } from './AuthContext';
 
 const CartContext = createContext();
 
 export const useCart = () => useContext(CartContext);
 
 export const CartProvider = ({ children }) => {
+  const { user } = useAuth();
   const [cartItems, setCartItems] = useState([]);
   const [isCartOpen, setIsCartOpen] = useState(false);
   const [wishlist, setWishlist] = useState([]);
@@ -42,10 +44,11 @@ export const CartProvider = ({ children }) => {
     }
   };
 
+  // Sync cart and wishlist when user logs in or page first loads with auth token
   useEffect(() => {
     syncServerCart();
     syncWishlist();
-  }, []);
+  }, [user]);
 
   const addToCart = (product, quantity = 1) => {
     const normalized = {
