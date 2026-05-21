@@ -51,6 +51,10 @@ export const CartProvider = ({ children }) => {
   }, [user]);
 
   const addToCart = (product, quantity = 1) => {
+    if (!user) {
+      toast.error("Please login to add items to cart");
+      return false;
+    }
     const normalized = {
       id: product._id || product.id,
       name: product.name,
@@ -71,6 +75,7 @@ export const CartProvider = ({ children }) => {
     if (product._id) cartApi.add(product._id, quantity).catch(() => {});
     toast.success("Added to cart");
     setIsCartOpen(true);
+    return true;
   };
 
   const removeFromCart = (productId) => {

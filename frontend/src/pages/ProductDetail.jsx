@@ -149,21 +149,35 @@ const ProductDetail = () => {
               {/* Action Buttons */}
               <div className="flex flex-col sm:flex-row gap-4 max-w-md">
                 <button 
-                  onClick={() => addToCart(product)}
+                  onClick={() => {
+                    const success = addToCart(product);
+                    if (!success) {
+                      navigate("/login");
+                    }
+                  }}
                   className="vexo-btn flex-1 py-5 flex items-center justify-center gap-3 uppercase text-[10px] tracking-widest font-bold"
                 >
                   <ShoppingBag size={18} /> Add to Cart
                 </button>
                 <button
                   onClick={() => {
-                    addToCart(product);
-                    navigate("/checkout");
+                    const success = addToCart(product);
+                    if (success) {
+                      navigate("/checkout");
+                    } else {
+                      navigate("/login");
+                    }
                   }}
                   className="flex-1 py-5 bg-primary text-background flex items-center justify-center gap-3 uppercase text-[10px] tracking-widest font-bold hover:bg-secondary transition-all rounded-full"
                 >
                   <Zap size={18} /> Buy Now
                 </button>
-                <button onClick={() => toggleWishlist(product.id)} className="flex-1 py-5 bg-surface text-primary flex items-center justify-center gap-3 uppercase text-[10px] tracking-widest font-bold hover:bg-primary/10 transition-all rounded-full border border-secondary/20">
+                <button 
+                  onClick={() => {
+                    toggleWishlist(product.id);
+                  }} 
+                  className="flex-1 py-5 bg-surface text-primary flex items-center justify-center gap-3 uppercase text-[10px] tracking-widest font-bold hover:bg-primary/10 transition-all rounded-full border border-secondary/20"
+                >
                   <Heart size={18} className={isInWishlist(product.id) ? "fill-primary" : ""} /> Wishlist
                 </button>
               </div>
@@ -202,7 +216,13 @@ const ProductDetail = () => {
                     />
                     <div className="absolute top-4 right-4 translate-y-2 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all hidden md:flex">
                        <button 
-                        onClick={(e) => { e.preventDefault(); addToCart(item); }}
+                        onClick={(e) => { 
+                          e.preventDefault(); 
+                          const success = addToCart(item);
+                          if (!success) {
+                            navigate("/login");
+                          }
+                        }}
                         className="w-10 h-10 bg-background text-primary rounded-full flex items-center justify-center shadow-xl hover:scale-95 transition-transform"
                        >
                          <Plus size={18} />

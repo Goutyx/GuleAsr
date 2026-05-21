@@ -25,7 +25,7 @@ const Navbar = () => {
         transition={{ duration: 0.8, ease: 'easeOut' }}
         className="absolute top-0 left-0 right-0 z-50 py-7 px-4 md:px-8"
       >
-        <div className="flex justify-between items-center max-w-[1800px] mx-auto">
+        <div className="flex justify-between items-center max-w-450 mx-auto">
           {/* Left: Nav Links (Desktop) */}
           <div className="flex-1 hidden md:flex items-center gap-8">
             {navLinks.map((link) => (
@@ -51,7 +51,7 @@ const Navbar = () => {
           </div>
 
           {/* Logo */}
-          <Link to="/" className="text-2xl md:text-3xl font-bold tracking-tighter flex-shrink-0 text-primary">
+          <Link to="/" className="text-2xl md:text-3xl font-bold tracking-tighter shrink-0 text-primary">
             GULE<span className="text-accent">ASR.</span>
           </Link>
 
@@ -90,7 +90,7 @@ const Navbar = () => {
             animate={{ x: 0 }}
             exit={{ x: '-100%' }}
             transition={{ type: 'spring', damping: 25, stiffness: 200 }}
-            className="fixed inset-0 z-[100] bg-background flex flex-col p-8 md:hidden"
+            className="fixed inset-0 z-100 bg-background flex flex-col p-8 md:hidden"
           >
             <div className="flex justify-between items-center mb-16">
               <span className="text-2xl font-bold tracking-tighter text-primary">GULE<span className="text-accent">ASR.</span></span>
