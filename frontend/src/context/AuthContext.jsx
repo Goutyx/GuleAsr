@@ -103,6 +103,15 @@ export const AuthProvider = ({ children }) => {
     toast.success("Signed out");
   };
 
+  // Listen for external logout events (e.g., from API error interceptor on 401)
+  useEffect(() => {
+    const handleLogout = (event) => {
+      logout();
+    };
+    window.addEventListener("logout", handleLogout);
+    return () => window.removeEventListener("logout", handleLogout);
+  }, []);
+
   const value = useMemo(
     () => ({ user, loading, login, register, logout, isAuthenticated: Boolean(user), isAdmin: user?.role === "admin" }),
     [user, loading]

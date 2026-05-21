@@ -8,8 +8,9 @@ import { formatINR } from "../utils/currency";
 import { orderApi, paymentApi } from "../services/api";
 
 const Checkout = () => {
-  const { cartItems, getCartTotal } = useCart();
+  const { cartItems, getCartTotal, cartItems: items, removeFromCart } = useCart();
   const [isSubmitted, setIsSubmitted] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   const [paymentMethod, setPaymentMethod] = useState("Card");
   const [formData, setFormData] = useState({
     name: "",
@@ -33,47 +34,77 @@ const Checkout = () => {
     });
 
   const createOrderAfterPayment = async (paymentStatus) => {
-    await orderApi.create({
-      shippingAddress: formData,
-      paymentMethod,
-      paymentStatus,
-    });
-    setIsSubmitted(true);
+    try {
+      setIsLoading(true);
+      await orderApi.create({
+        shippingAddress: formData,
+        paymentMethod,
+        paymentStatus,
+      });
+      // Clear cart items after successful order creation
+      cartItems.forEach(item => removeFromCart(item.id));
+      setIsSubmitted(true);
+      toast.success("Order placed successfully!");
+    } catch (error) {
+      toast.error(error.response?.data?.message || "Failed to create order");
+      setIsLoading(false);
+    }
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!cartItems.length) return;
+    if (!cartItems.length) {
+      toast.error("Your cart is empty");
+      return;
+    }
     if (!localStorage.getItem("guleasr_token")) {
       toast.error("Please login before checkout");
       return;
     }
-    if (paymentMethod === "COD") {
-      await createOrderAfterPayment("pending");
+    // Validate form
+    if (!formData.name || !formData.email || !formData.phone || !formData.line1 || !formData.city || !formData.postalCode || !formData.state) {
+      toast.error("Please fill all fields");
       return;
     }
-    const ready = await loadRazorpay();
-    if (!ready) {
-      toast.error("Unable to load payment gateway");
-      return;
+    
+    try {
+      setIsLoading(true);
+      if (paymentMethod === "COD") {
+        await createOrderAfterPayment("pending");
+        return;
+      }
+      const ready = await loadRazorpay();
+      if (!ready) {
+        toast.error("Unable to load payment gateway");
+        setIsLoading(false);
+        return;
+      }
+      const { data } = await paymentApi.createOrder(getCartTotal());
+      const options = {
+        key: data.key,
+        amount: data.order.amount,
+        currency: data.order.currency,
+        name: "GuleAsr",
+        description: "Premium fragrance checkout",
+        order_id: data.order.id,
+        handler: async (response) => {
+          try {
+            await paymentApi.verify(response);
+            await createOrderAfterPayment("paid");
+          } catch (error) {
+            toast.error("Payment verification failed");
+            setIsLoading(false);
+          }
+        },
+        prefill: { name: formData.name, email: formData.email, contact: formData.phone },
+        theme: { color: "#967D6A" },
+      };
+      const gateway = new window.Razorpay(options);
+      gateway.open();
+    } catch (error) {
+      toast.error(error.response?.data?.message || "Failed to process payment");
+      setIsLoading(false);
     }
-    const { data } = await paymentApi.createOrder(getCartTotal());
-    const options = {
-      key: data.key,
-      amount: data.order.amount,
-      currency: data.order.currency,
-      name: "GuleAsr",
-      description: "Premium fragrance checkout",
-      order_id: data.order.id,
-      handler: async (response) => {
-        await paymentApi.verify(response);
-        await createOrderAfterPayment("paid");
-      },
-      prefill: { name: formData.name, email: formData.email, contact: formData.phone },
-      theme: { color: "#967D6A" },
-    };
-    const gateway = new window.Razorpay(options);
-    gateway.open();
   };
 
   if (isSubmitted) {
@@ -130,8 +161,8 @@ const Checkout = () => {
               </div>
             </div>
 
-            <button type="submit" className="vexo-btn w-full py-5 text-sm uppercase tracking-widest font-bold">
-              Place Order - {formatINR(getCartTotal())}
+            <button type="submit" disabled={isLoading} className="vexo-btn w-full py-5 text-sm uppercase tracking-widest font-bold disabled:opacity-50 disabled:cursor-not-allowed">
+              {isLoading ? "Processing..." : `Place Order - ${formatINR(getCartTotal())}`}
             </button>
           </form>
         </div>

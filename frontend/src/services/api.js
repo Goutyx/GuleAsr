@@ -1,4 +1,5 @@
 import axios from "axios";
+import toast from "react-hot-toast";
 
 const api = axios.create({
   baseURL: import.meta.env.VITE_API_URL || "http://localhost:5000/api",
@@ -11,6 +12,25 @@ api.interceptors.request.use((config) => {
   }
   return config;
 });
+
+// Handle response errors - particularly 401 for token expiry
+api.interceptors.response.use(
+  (response) => response,
+  (error) => {
+    if (error.response?.status === 401) {
+      // Token expired or invalid
+      localStorage.removeItem("guleasr_token");
+      localStorage.removeItem("guleasr_mock_session");
+      // Dispatch logout event that AuthContext can listen to
+      window.dispatchEvent(new CustomEvent("logout", { detail: { reason: "Token expired" } }));
+      if (!window.location.pathname.includes("/login")) {
+        toast.error("Session expired. Please login again.");
+        window.location.href = "/login";
+      }
+    }
+    return Promise.reject(error);
+  }
+);
 
 export const authApi = {
   register: (payload) => api.post("/auth/register", payload),
