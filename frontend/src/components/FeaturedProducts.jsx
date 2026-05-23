@@ -34,7 +34,7 @@ const FeaturedProducts = () => {
         <div className="sticky top-0 flex h-screen items-center overflow-hidden">
         <motion.div style={{ x }} className="flex gap-4 md:gap-8 px-6 md:px-16 w-max">
             {/* Label card at front */}
-            <div className="flex-shrink-0 flex flex-col justify-center min-w-[70vw] sm:min-w-[40vw] md:min-w-[30vw] pr-8">
+            <div className="shrink-0 flex flex-col justify-center min-w-[70vw] sm:min-w-[40vw] md:min-w-[30vw] pr-8">
               <span className="text-[10px] md:text-xs uppercase tracking-widest text-accent font-bold mb-3 md:mb-4">New Drop 2026</span>
               <h2 className="text-5xl sm:text-6xl md:text-8xl font-bold tracking-tighter text-primary leading-[0.9] mb-4 md:mb-6">
                 CURATED<br /><span className="text-secondary">SELECTION.</span>
@@ -48,7 +48,7 @@ const FeaturedProducts = () => {
               <Link
                 key={product.id}
                 to={`/product/${product.id}`}
-                className="vexo-card group flex-shrink-0 relative overflow-hidden w-[260px] sm:w-[320px] lg:w-[360px] aspect-[3/4]"
+                className="vexo-card group shrink-0 relative overflow-hidden w-65 sm:w-[320px] lg:w-90 aspect-3/4"
               >
                 <div className="relative w-full h-full bg-surface overflow-hidden">
                   <img
@@ -70,7 +70,7 @@ const FeaturedProducts = () => {
                       <Plus size={18} className="sm:w-5 sm:h-5" strokeWidth={2.5} />
                     </button>
                   </div>
-                  <div className="absolute bottom-0 left-0 right-0 p-4 sm:p-6 bg-gradient-to-t from-black/80 via-black/30 to-transparent">
+                  <div className="absolute bottom-0 left-0 right-0 p-4 sm:p-6 bg-linear-to-t from-black/80 via-black/30 to-transparent">
                     <span className="text-[10px] sm:text-[11px] text-white/60 uppercase tracking-widest font-semibold mb-1 block">{product.category} • {product.type}</span>
                     <div className="flex justify-between items-end">
                       <h3 className="text-xl sm:text-2xl text-white font-bold tracking-tight">{product.name}</h3>
@@ -85,7 +85,7 @@ const FeaturedProducts = () => {
       </section>
 
       {/* ── All Products Grid with Filters ── */}
-      <section className="pt-4 pb-16 md:py-24 px-4 md:px-8 max-w-[1800px] mx-auto">
+      <section className="pt-4 pb-16 md:py-24 px-4 md:px-8 max-w-450 mx-auto">
         <div className="flex flex-col md:flex-row md:items-end justify-between gap-8 mb-12">
           <div>
             <h2 className="text-5xl md:text-6xl font-bold tracking-tighter text-primary mb-2">SHOP</h2>
@@ -98,7 +98,7 @@ const FeaturedProducts = () => {
               <button
                 key={f}
                 onClick={() => setActiveFilter(f)}
-                className={`flex-shrink-0 px-5 py-2 rounded-full text-[10px] md:text-sm font-semibold uppercase tracking-widest transition-all ${
+                className={`shrink-0 px-5 py-2 rounded-full text-[10px] md:text-sm font-semibold uppercase tracking-widest transition-all ${
                   activeFilter === f
                     ? "bg-primary text-background"
                     : "bg-surface text-secondary hover:bg-primary/10 hover:text-primary border border-secondary/5"
@@ -120,7 +120,7 @@ const FeaturedProducts = () => {
               transition={{ delay: index * 0.06 }}
               className="vexo-card group cursor-pointer"
             >
-              <Link to={`/product/${product.id}`} className="block relative aspect-[3/4] overflow-hidden bg-surface">
+              <Link to={`/product/${product.id}`} className="block relative aspect-3/4 overflow-hidden bg-surface">
                 <img
                    src={product.image}
                    alt={product.name}

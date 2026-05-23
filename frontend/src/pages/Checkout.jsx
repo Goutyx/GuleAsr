@@ -128,7 +128,7 @@ const Checkout = () => {
   }
 
   return (
-    <div className="pt-32 pb-24 px-4 md:px-8 max-w-[1200px] mx-auto min-h-screen">
+    <div className="pt-32 pb-24 px-4 md:px-8 max-w-300 mx-auto min-h-screen">
       <Link to="/shop" className="inline-flex items-center text-sm font-semibold tracking-widest uppercase text-secondary hover:text-primary transition-colors mb-8">
         <ArrowLeft size={16} className="mr-2" /> Back to Shop
       </Link>
@@ -170,7 +170,7 @@ const Checkout = () => {
         </div>
 
         {/* Order Summary */}
-        <div className="w-full lg:w-[400px]">
+        <div className="w-full lg:w-100">
           <div className="vexo-card p-8 sticky top-32">
             <h2 className="text-xl font-bold mb-6 text-primary">Order Summary</h2>
             <div className="space-y-4 mb-6">
