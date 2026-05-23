@@ -1,6 +1,7 @@
 const asyncHandler = require("express-async-handler");
 const crypto = require("crypto");
 const Razorpay = require("razorpay");
+const Order = require("../models/Order");
 
 const razorpay =
   process.env.RAZORPAY_KEY_ID && process.env.RAZORPAY_KEY_SECRET
@@ -45,6 +46,16 @@ const verifyRazorpayPayment = asyncHandler(async (req, res) => {
     res.status(400);
     throw new Error("Payment signature verification failed");
   }
+
+  // Update order with payment details
+  const order = await Order.findOne({ razorpayOrderId: razorpay_order_id, user: req.user._id });
+  if (order) {
+    order.paymentStatus = "paid";
+    order.razorpayPaymentId = razorpay_payment_id;
+    order.razorpaySignature = razorpay_signature;
+    await order.save();
+  }
+
   res.json({ verified: true });
 });
 
