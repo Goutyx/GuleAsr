@@ -40,6 +40,7 @@ app.use(helmet());
 app.use(morgan("dev"));
 app.use(express.json());
 
+
 // Routes
 app.use("/api/auth", authRoutes);
 app.use("/api/products", productRoutes);
