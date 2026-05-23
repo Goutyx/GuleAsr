@@ -17,7 +17,6 @@ const { notFound, errorHandler } = require("./middleware/errorMiddleware");
 const app = express();
 const PORT = process.env.PORT || 5000;
 
-// Middleware
 const corsOptions = {
   origin: (origin, callback) => {
     const allowedOrigins = [
