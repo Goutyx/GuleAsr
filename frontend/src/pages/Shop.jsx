@@ -52,7 +52,7 @@ const Shop = () => {
   const fragranceFamilies = useMemo(() => ["Floral", "Woody", "Fresh", "Oriental", "Citrus"], []);
 
   return (
-    <div className="pt-24 md:pt-32 pb-24 px-4 md:px-8 max-w-[1800px] mx-auto min-h-screen">
+    <div className="pt-24 md:pt-32 pb-24 px-4 md:px-8 max-w-450 mx-auto min-h-screen">
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
@@ -76,7 +76,7 @@ const Shop = () => {
       <div className="flex flex-col md:flex-row gap-12 relative">
         {/* Sidebar Filters */}
         <div className={`
-          w-full md:w-64 flex-shrink-0 
+          w-full md:w-64 shrink-0 
           ${isFilterOpen ? "block" : "hidden md:block"}
           transition-all duration-300
         `}>
@@ -121,7 +121,7 @@ const Shop = () => {
               transition={{ delay: index * 0.05 }}
               className="vexo-card group flex flex-col cursor-pointer overflow-hidden"
             >
-              <Link to={`/product/${product.id}`} className="relative aspect-[4/5] overflow-hidden bg-surface block">
+              <Link to={`/product/${product.id}`} className="relative aspect-4/5 overflow-hidden bg-surface block">
                 <img 
                   src={product.images?.[0] || product.image} 
                   alt={product.name} 
