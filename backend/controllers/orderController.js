@@ -3,7 +3,7 @@ const Order = require("../models/Order");
 const Cart = require("../models/Cart");
 
 const createOrder = asyncHandler(async (req, res) => {
-  const { shippingAddress, paymentMethod = "Card", paymentStatus = "pending" } = req.body;
+  const { shippingAddress, paymentMethod = "Card", paymentStatus = "pending", razorpayOrderId } = req.body;
   const cart = await Cart.findOne({ user: req.user._id }).populate("items.product");
   if (!cart || cart.items.length === 0) {
     res.status(400);
@@ -26,6 +26,7 @@ const createOrder = asyncHandler(async (req, res) => {
     shippingAddress,
     paymentMethod,
     paymentStatus,
+    razorpayOrderId,
   });
   cart.items = [];
   await cart.save();

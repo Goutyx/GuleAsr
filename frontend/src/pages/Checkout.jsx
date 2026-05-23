@@ -33,13 +33,14 @@ const Checkout = () => {
       document.body.appendChild(script);
     });
 
-  const createOrderAfterPayment = async (paymentStatus) => {
+  const createOrderAfterPayment = async (paymentStatus, razorpayOrderId = null) => {
     try {
       setIsLoading(true);
       await orderApi.create({
         shippingAddress: formData,
         paymentMethod,
         paymentStatus,
+        razorpayOrderId,
       });
       // Clear cart items after successful order creation
       cartItems.forEach(item => removeFromCart(item.id));
@@ -90,7 +91,7 @@ const Checkout = () => {
         handler: async (response) => {
           try {
             await paymentApi.verify(response);
-            await createOrderAfterPayment("paid");
+            await createOrderAfterPayment("paid", data.order.id);
           } catch (error) {
             toast.error("Payment verification failed");
             setIsLoading(false);
