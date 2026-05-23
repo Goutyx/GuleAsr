@@ -18,7 +18,22 @@ const app = express();
 const PORT = process.env.PORT || 5000;
 
 // Middleware
-app.use(cors({ origin: process.env.CLIENT_URL || "*" }));
+// app.use(cors({ origin: process.env.CLIENT_URL || "*" }));
+// app.use(helmet());
+// app.use(morgan("dev"));
+// app.use(express.json());
+
+// Middleware
+app.use(cors({
+  origin: [
+    "http://localhost:5173", // local Vite
+    process.env.CLIENT_URL   // Vercel frontend
+  ],
+  credentials: true,
+  methods: ["GET", "POST", "PUT", "DELETE", "PATCH"],
+  allowedHeaders: ["Content-Type", "Authorization"]
+}));
+
 app.use(helmet());
 app.use(morgan("dev"));
 app.use(express.json());
