@@ -39,11 +39,32 @@ const getMyOrders = asyncHandler(async (req, res) => {
 });
 
 const getAllOrders = asyncHandler(async (req, res) => {
-  const orders = await Order.find()
-    .populate("user", "name email phone")
-    .populate("items.product", "name")
-    .sort({ createdAt: -1 });
+  const orders = await Order.find().select("-user").sort({ createdAt: -1 });
   res.json(orders);
 });
 
-module.exports = { createOrder, getMyOrders, getAllOrders };
+const updateOrderStatus = asyncHandler(async (req, res) => {
+  const { orderId } = req.params;
+  const { orderStatus } = req.body;
+  
+  const validStatuses = ["placed", "processing", "shipped", "delivered"];
+  if (!validStatuses.includes(orderStatus)) {
+    res.status(400);
+    throw new Error(`Invalid status. Must be one of: ${validStatuses.join(", ")}`);
+  }
+  
+  const order = await Order.findByIdAndUpdate(
+    orderId,
+    { orderStatus },
+    { new: true }
+  );
+  
+  if (!order) {
+    res.status(404);
+    throw new Error("Order not found");
+  }
+  
+  res.json(order);
+});
+
+module.exports = { createOrder, getMyOrders, getAllOrders, updateOrderStatus };
