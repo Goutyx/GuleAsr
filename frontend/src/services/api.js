@@ -80,6 +80,13 @@ export const adminApi = {
   createProduct: (payload) => api.post("/products", payload),
   updateProduct: (id, payload) => api.put(`/products/${id}`, payload),
   deleteProduct: (id) => api.delete(`/products/${id}`),
+  uploadImage: (file) => {
+    const formData = new FormData();
+    formData.append("image", file);
+    return api.post("/upload", formData, {
+      headers: { "Content-Type": "multipart/form-data" },
+    });
+  },
 };
 
 export default api;
