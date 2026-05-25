@@ -27,7 +27,7 @@ const Footer = () => {
         {/* Brand Column */}
         <div className="lg:col-span-1">
           <h2 className="text-5xl text-white font-bold tracking-tighter mb-6">
-            GULE<span style={{ color: '#967D6A' }}>ASR.</span>
+            GULE<span style={{ color: '#967D6A' }}>ASR</span>
           </h2>
           <p className="text-background/70 text-sm leading-relaxed mb-8 max-w-xs">
             Born from the ancient art of perfumery, GuleAsr crafts fragrances that are timeless, evocative, and utterly luxurious.
@@ -110,7 +110,7 @@ const Footer = () => {
             </li>
             <li className="flex items-start gap-2">
               <MapPin size={14} className="mt-0.5 flex-shrink-0" />
-              <span>GuleAsr HQ, Mumbai, Maharashtra, India</span>
+              <span>GuleAsr HQ, Noida, Uttar Pradesh, India</span>
             </li>
             <li className="flex items-center gap-2 font-bold" style={{ color: '#967D6A' }}>
               <InstagramIcon />
@@ -123,33 +123,7 @@ const Footer = () => {
                 @guleasr.official
               </a>
             </li>
-            <li className="flex items-center gap-2 font-bold" style={{ color: '#967D6A' }}>
-              <InstagramIcon />
-              <a
-                href="https://www.instagram.com/guleasr.oils"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="hover:underline underline-offset-2"
-              >
-                @guleasr.oils
-              </a>
-            </li>
           </ul>
-
-          {/* Newsletter */}
-          <div>
-            <p className="text-xs text-background/60 uppercase tracking-widest font-bold mb-3">Newsletter</p>
-            <div className="flex">
-              <input
-                type="email"
-                placeholder="Your email"
-                className="flex-1 bg-background/10 border border-background/20 text-background placeholder-background/40 px-4 py-3 rounded-l-xl text-sm focus:outline-none focus:border-accent"
-              />
-              <button className="bg-accent hover:bg-accent/80 text-white px-5 py-3 rounded-r-xl text-sm font-bold uppercase tracking-wider transition-colors">
-                Join
-              </button>
-            </div>
-          </div>
         </div>
       </div>
 
@@ -160,10 +134,6 @@ const Footer = () => {
           Follow us&nbsp;
           <a href="https://www.instagram.com/guleasr.official" target="_blank" rel="noopener noreferrer" className="font-bold hover:underline" style={{ color: '#967D6A' }}>
             @guleasr.official
-          </a>
-          &nbsp;&amp;&nbsp;
-          <a href="https://www.instagram.com/guleasr.oils" target="_blank" rel="noopener noreferrer" className="font-bold hover:underline" style={{ color: '#967D6A' }}>
-            @guleasr.oils
           </a>
         </p>
       </div>
