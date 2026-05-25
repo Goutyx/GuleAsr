@@ -77,6 +77,7 @@ export const adminApi = {
   stats: () => api.get("/admin/stats"),
   users: () => api.get("/admin/users"),
   orders: () => api.get("/orders"),
+  updateOrderStatus: (orderId, orderStatus) => api.put(`/orders/${orderId}`, { orderStatus }),
   createProduct: (payload) => api.post("/products", payload),
   updateProduct: (id, payload) => api.put(`/products/${id}`, payload),
   deleteProduct: (id) => api.delete(`/products/${id}`),

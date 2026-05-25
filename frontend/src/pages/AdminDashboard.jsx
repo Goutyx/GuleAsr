@@ -108,8 +108,6 @@ const AdminDashboard = () => {
             <thead>
               <tr className="border-b border-secondary/20">
                 <th className="text-left p-3 text-secondary">Order ID</th>
-                <th className="text-left p-3 text-secondary">Customer</th>
-                <th className="text-left p-3 text-secondary">Email</th>
                 <th className="text-left p-3 text-secondary">Products</th>
                 <th className="text-left p-3 text-secondary">Total</th>
                 <th className="text-left p-3 text-secondary">Order Status</th>
@@ -122,8 +120,6 @@ const AdminDashboard = () => {
                 orders.map((order) => (
                   <tr key={order._id} className="border-b border-secondary/10 hover:bg-secondary/5">
                     <td className="p-3 text-secondary">{order._id.slice(-6)}</td>
-                    <td className="p-3 text-secondary">{order.user?.name || "N/A"}</td>
-                    <td className="p-3 text-secondary text-xs">{order.user?.email || "N/A"}</td>
                     <td className="p-3 text-secondary text-xs">
                       {order.items.map((item, idx) => (
                         <div key={idx}>{item.name} x{item.quantity}</div>
@@ -131,14 +127,30 @@ const AdminDashboard = () => {
                     </td>
                     <td className="p-3 text-secondary font-semibold">{formatINR(order.totalAmount)}</td>
                     <td className="p-3">
-                      <span className={`px-2 py-1 rounded-lg text-xs font-semibold ${
-                        order.orderStatus === 'delivered' ? 'bg-green-500/20 text-green-400' :
-                        order.orderStatus === 'shipped' ? 'bg-blue-500/20 text-blue-400' :
-                        order.orderStatus === 'processing' ? 'bg-yellow-500/20 text-yellow-400' :
-                        'bg-gray-500/20 text-gray-400'
-                      }`}>
-                        {order.orderStatus}
-                      </span>
+                      <select
+                        value={order.orderStatus}
+                        onChange={async (e) => {
+                          const newStatus = e.target.value;
+                          try {
+                            await adminApi.updateOrderStatus(order._id, newStatus);
+                            toast.success(`Order status updated to ${newStatus}!`);
+                            refresh();
+                          } catch (error) {
+                            toast.error(error.response?.data?.message || "Failed to update status");
+                          }
+                        }}
+                        className={`px-2 py-1 rounded-lg text-xs font-semibold bg-background border cursor-pointer ${
+                          order.orderStatus === 'delivered' ? 'border-green-500/50 text-green-400' :
+                          order.orderStatus === 'shipped' ? 'border-blue-500/50 text-blue-400' :
+                          order.orderStatus === 'processing' ? 'border-yellow-500/50 text-yellow-400' :
+                          'border-gray-500/50 text-gray-400'
+                        }`}
+                      >
+                        <option value="placed">placed</option>
+                        <option value="processing">processing</option>
+                        <option value="shipped">shipped</option>
+                        <option value="delivered">delivered</option>
+                      </select>
                     </td>
                     <td className="p-3">
                       <span className={`px-2 py-1 rounded-lg text-xs font-semibold ${
@@ -154,7 +166,7 @@ const AdminDashboard = () => {
                 ))
               ) : (
                 <tr>
-                  <td colSpan="8" className="p-4 text-center text-secondary">No orders yet</td>
+                  <td colSpan="6" className="p-4 text-center text-secondary">No orders yet</td>
                 </tr>
               )}
             </tbody>
