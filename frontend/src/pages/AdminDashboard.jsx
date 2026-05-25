@@ -10,6 +10,7 @@ const AdminDashboard = () => {
   const [stats, setStats] = useState(null);
   const [users, setUsers] = useState([]);
   const [products, setProducts] = useState([]);
+  const [orders, setOrders] = useState([]);
   const [form, setForm] = useState({ name: "", category: "Floral", type: "perfume", price: 2500, description: "", imageFile: null, imagePreview: null, stock: 10 });
   const [uploading, setUploading] = useState(false);
 
@@ -80,6 +81,7 @@ const AdminDashboard = () => {
     adminApi.stats().then(({ data }) => setStats(data)).catch(() => setStats(null));
     adminApi.users().then(({ data }) => setUsers(data)).catch(() => setUsers([]));
     productApi.list().then(({ data }) => setProducts(data)).catch(() => setProducts([]));
+    adminApi.orders().then(({ data }) => setOrders(data)).catch(() => setOrders([]));
   };
 
   useEffect(() => {
@@ -97,6 +99,67 @@ const AdminDashboard = () => {
         <div className="vexo-card p-5"><p className="text-secondary">Orders</p><p className="text-primary font-bold text-2xl">{stats?.orders || 0}</p></div>
         <div className="vexo-card p-5"><p className="text-secondary">Users</p><p className="text-primary font-bold text-2xl">{stats?.users || 0}</p></div>
         <div className="vexo-card p-5"><p className="text-secondary">Products</p><p className="text-primary font-bold text-2xl">{stats?.products || 0}</p></div>
+      </div>
+
+      <div className="vexo-card p-6 mb-6">
+        <h2 className="text-2xl font-bold text-primary mb-4">Orders</h2>
+        <div className="overflow-x-auto">
+          <table className="w-full text-sm">
+            <thead>
+              <tr className="border-b border-secondary/20">
+                <th className="text-left p-3 text-secondary">Order ID</th>
+                <th className="text-left p-3 text-secondary">Customer</th>
+                <th className="text-left p-3 text-secondary">Email</th>
+                <th className="text-left p-3 text-secondary">Products</th>
+                <th className="text-left p-3 text-secondary">Total</th>
+                <th className="text-left p-3 text-secondary">Order Status</th>
+                <th className="text-left p-3 text-secondary">Payment</th>
+                <th className="text-left p-3 text-secondary">Date</th>
+              </tr>
+            </thead>
+            <tbody>
+              {orders.length > 0 ? (
+                orders.map((order) => (
+                  <tr key={order._id} className="border-b border-secondary/10 hover:bg-secondary/5">
+                    <td className="p-3 text-secondary">{order._id.slice(-6)}</td>
+                    <td className="p-3 text-secondary">{order.user?.name || "N/A"}</td>
+                    <td className="p-3 text-secondary text-xs">{order.user?.email || "N/A"}</td>
+                    <td className="p-3 text-secondary text-xs">
+                      {order.items.map((item, idx) => (
+                        <div key={idx}>{item.name} x{item.quantity}</div>
+                      ))}
+                    </td>
+                    <td className="p-3 text-secondary font-semibold">{formatINR(order.totalAmount)}</td>
+                    <td className="p-3">
+                      <span className={`px-2 py-1 rounded-lg text-xs font-semibold ${
+                        order.orderStatus === 'delivered' ? 'bg-green-500/20 text-green-400' :
+                        order.orderStatus === 'shipped' ? 'bg-blue-500/20 text-blue-400' :
+                        order.orderStatus === 'processing' ? 'bg-yellow-500/20 text-yellow-400' :
+                        'bg-gray-500/20 text-gray-400'
+                      }`}>
+                        {order.orderStatus}
+                      </span>
+                    </td>
+                    <td className="p-3">
+                      <span className={`px-2 py-1 rounded-lg text-xs font-semibold ${
+                        order.paymentStatus === 'paid' ? 'bg-green-500/20 text-green-400' :
+                        order.paymentStatus === 'pending' ? 'bg-yellow-500/20 text-yellow-400' :
+                        'bg-red-500/20 text-red-400'
+                      }`}>
+                        {order.paymentStatus}
+                      </span>
+                    </td>
+                    <td className="p-3 text-secondary text-xs">{new Date(order.createdAt).toLocaleDateString()}</td>
+                  </tr>
+                ))
+              ) : (
+                <tr>
+                  <td colSpan="8" className="p-4 text-center text-secondary">No orders yet</td>
+                </tr>
+              )}
+            </tbody>
+          </table>
+        </div>
       </div>
 
       <div className="vexo-card p-6 mb-6">
