@@ -167,7 +167,7 @@ const AdminDashboard = () => {
                       </span>
                     </td>
                     <td className="p-3 text-secondary text-xs">{new Date(order.createdAt).toLocaleDateString()}</td>
-                  </tr>7
+                  </tr>
                 ))
               ) : (
                 <tr>
