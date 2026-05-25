@@ -2,6 +2,7 @@ const express = require('express');
 const cors = require('cors');
 const helmet = require("helmet");
 const morgan = require("morgan");
+const path = require('path');
 require('dotenv').config();
 
 const connectDB = require("./config/db");
@@ -12,6 +13,7 @@ const orderRoutes = require("./routes/orderRoutes");
 const paymentRoutes = require("./routes/paymentRoutes");
 const wishlistRoutes = require("./routes/wishlistRoutes");
 const adminRoutes = require("./routes/adminRoutes");
+const uploadRoutes = require("./routes/uploadRoutes");
 const { notFound, errorHandler } = require("./middleware/errorMiddleware");
 
 const app = express();
@@ -38,6 +40,7 @@ app.use(cors(corsOptions));
 app.use(helmet());
 app.use(morgan("dev"));
 app.use(express.json());
+app.use(express.static(path.join(__dirname, 'uploads')));
 
 
 // Routes
@@ -48,6 +51,7 @@ app.use("/api/orders", orderRoutes);
 app.use("/api/payments", paymentRoutes);
 app.use("/api/wishlist", wishlistRoutes);
 app.use("/api/admin", adminRoutes);
+app.use("/api/upload", uploadRoutes);
 
 app.get('/', (req, res) => {
   res.send('GuleAsr Backend API is running');
