@@ -15,8 +15,13 @@ const Login = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      await login({ email, password });
-      navigate("/profile");
+      const user = await login({ email, password });
+      // Redirect admin to dashboard, other users to profile
+      if (user?.role === "admin") {
+        navigate("/admin");
+      } else {
+        navigate("/profile");
+      }
     } catch (error) {
       toast.error(error?.response?.data?.message || error?.message || "Login failed");
     }

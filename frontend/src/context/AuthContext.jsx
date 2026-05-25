@@ -48,6 +48,7 @@ export const AuthProvider = ({ children }) => {
     localStorage.removeItem(MOCK_SESSION_KEY);
     setUser(data.user);
     toast.success("Welcome back");
+    return data.user;
   };
 
   const register = async (payload) => {
