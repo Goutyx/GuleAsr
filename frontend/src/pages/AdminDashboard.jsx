@@ -108,6 +108,7 @@ const AdminDashboard = () => {
             <thead>
               <tr className="border-b border-secondary/20">
                 <th className="text-left p-3 text-secondary">Order ID</th>
+                <th className="text-left p-3 text-secondary">Customer</th>
                 <th className="text-left p-3 text-secondary">Products</th>
                 <th className="text-left p-3 text-secondary">Total</th>
                 <th className="text-left p-3 text-secondary">Order Status</th>
@@ -120,6 +121,10 @@ const AdminDashboard = () => {
                 orders.map((order) => (
                   <tr key={order._id} className="border-b border-secondary/10 hover:bg-secondary/5">
                     <td className="p-3 text-secondary">{order._id.slice(-6)}</td>
+                    <td className="p-3 text-secondary text-xs">
+                      <div>{order.user?.name || "N/A"}</div>
+                      <div className="text-secondary/60">{order.user?.email || ""}</div>
+                    </td>
                     <td className="p-3 text-secondary text-xs">
                       {order.items.map((item, idx) => (
                         <div key={idx}>{item.name} x{item.quantity}</div>
@@ -162,7 +167,7 @@ const AdminDashboard = () => {
                       </span>
                     </td>
                     <td className="p-3 text-secondary text-xs">{new Date(order.createdAt).toLocaleDateString()}</td>
-                  </tr>
+                  </tr>7
                 ))
               ) : (
                 <tr>

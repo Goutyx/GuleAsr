@@ -39,7 +39,7 @@ const getMyOrders = asyncHandler(async (req, res) => {
 });
 
 const getAllOrders = asyncHandler(async (req, res) => {
-  const orders = await Order.find().select("-user").sort({ createdAt: -1 });
+  const orders = await Order.find().populate("user", "name email phone").sort({ createdAt: -1 });
   res.json(orders);
 });
 
