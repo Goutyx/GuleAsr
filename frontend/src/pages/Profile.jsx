@@ -237,7 +237,7 @@ const Profile = () => {
             <div className="vexo-card p-6 md:p-8 bg-primary text-background overflow-hidden relative group rounded-[2rem]">
               <div className="relative z-10">
                 <h2 className="text-xl font-bold mb-2 tracking-tight">Need help?</h2>
-                <p className="text-background/90 text-sm mb-6 leading-relaxed">Our concierge team is available 24/7 for our premium members.</p>
+                <p className="text-black text-sm mb-6 leading-relaxed">Our concierge team is available 24/7 for our premium members.</p>
                 <button className="bg-background text-primary px-8 py-3.5 text-[10px] font-bold uppercase tracking-widest hover:bg-accent transition-colors rounded-xl">
                   Contact Support
                 </button>
