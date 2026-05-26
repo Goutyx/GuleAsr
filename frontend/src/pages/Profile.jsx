@@ -5,13 +5,14 @@ import { orderApi } from "../services/api";
 import { useAuth } from "../context/AuthContext";
 import { useCart } from "../context/CartContext";
 import { formatINR } from "../utils/currency";
-import { User, Package, Heart, LogOut, Settings, ChevronRight, Clock } from "lucide-react";
+import { User, Package, Heart, LogOut, Settings, ChevronRight, Clock, ChevronDown } from "lucide-react";
 
 const Profile = () => {
   const { user, isAuthenticated, logout } = useAuth();
   const { wishlist } = useCart();
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [expandedOrderId, setExpandedOrderId] = useState(null);
 
   useEffect(() => {
     if (isAuthenticated) {
@@ -122,29 +123,86 @@ const Profile = () => {
                       initial={{ opacity: 0, x: -20 }}
                       animate={{ opacity: 1, x: 0 }}
                       transition={{ delay: 0.2 + i * 0.05 }}
-                      className="group border border-secondary/10 rounded-2xl p-5 md:p-6 hover:bg-surface/50 transition-all flex flex-col sm:flex-row justify-between items-start sm:items-center gap-6"
+                      className="border border-secondary/10 rounded-2xl overflow-hidden"
                     >
-                      <div className="flex items-center gap-4">
-                        <div className="w-10 h-10 md:w-12 md:h-12 bg-primary/5 rounded-full flex items-center justify-center text-primary shrink-0">
-                          <Package size={18} />
-                        </div>
-                        <div>
-                          <div className="flex flex-wrap items-center gap-2 mb-1">
-                            <span className="text-primary font-bold text-sm md:text-base">Order #{order._id.slice(-8).toUpperCase()}</span>
-                            <span className="px-2 py-0.5 bg-green-500/10 text-green-500 text-[9px] font-bold uppercase tracking-tighter rounded">Processed</span>
+                      <button
+                        onClick={() => setExpandedOrderId(expandedOrderId === order._id ? null : order._id)}
+                        className="w-full group p-5 md:p-6 hover:bg-surface/50 transition-all flex flex-col sm:flex-row justify-between items-start sm:items-center gap-6"
+                      >
+                        <div className="flex items-center gap-4">
+                          <div className="w-10 h-10 md:w-12 md:h-12 bg-primary/5 rounded-full flex items-center justify-center text-primary shrink-0">
+                            <Package size={18} />
                           </div>
-                          <p className="text-secondary text-[10px] md:text-xs">{new Date(order.createdAt).toLocaleDateString('en-US', { day: 'numeric', month: 'long', year: 'numeric' })}</p>
+                          <div className="text-left">
+                            <div className="flex flex-wrap items-center gap-2 mb-1">
+                              <span className="text-primary font-bold text-sm md:text-base">Order #{order._id.slice(-8).toUpperCase()}</span>
+                              <span className={`px-2 py-0.5 text-[9px] font-bold uppercase tracking-tighter rounded ${
+                                order.orderStatus === 'delivered' ? 'bg-green-500/10 text-green-500' :
+                                order.orderStatus === 'shipped' ? 'bg-blue-500/10 text-blue-500' :
+                                order.orderStatus === 'processing' ? 'bg-yellow-500/10 text-yellow-500' :
+                                'bg-gray-500/10 text-gray-500'
+                              }`}>
+                                {order.orderStatus}
+                              </span>
+                            </div>
+                            <p className="text-secondary text-[10px] md:text-xs">{new Date(order.createdAt).toLocaleDateString('en-US', { day: 'numeric', month: 'long', year: 'numeric' })}</p>
+                          </div>
                         </div>
-                      </div>
-                      <div className="flex items-center gap-6 w-full sm:w-auto justify-between sm:justify-end border-t sm:border-t-0 pt-4 sm:pt-0 border-secondary/5">
-                        <div className="sm:text-right">
-                          <p className="text-[10px] text-secondary uppercase font-bold tracking-widest mb-0.5">Amount</p>
-                          <p className="text-lg md:text-xl font-bold text-primary">{formatINR(order.totalAmount)}</p>
+                        <div className="flex items-center gap-6 w-full sm:w-auto justify-between sm:justify-end border-t sm:border-t-0 pt-4 sm:pt-0 border-secondary/5">
+                          <div className="sm:text-right">
+                            <p className="text-[10px] text-secondary uppercase font-bold tracking-widest mb-0.5">Amount</p>
+                            <p className="text-lg md:text-xl font-bold text-primary">{formatINR(order.totalAmount)}</p>
+                          </div>
+                          <motion.div
+                            animate={{ rotate: expandedOrderId === order._id ? 180 : 0 }}
+                            transition={{ duration: 0.2 }}
+                            className="p-2 text-secondary"
+                          >
+                            <ChevronDown size={18} />
+                          </motion.div>
                         </div>
-                        <button className="p-2 hover:bg-primary hover:text-background rounded-full transition-colors border border-secondary/10 sm:border-0">
-                          <ChevronRight size={18} />
-                        </button>
-                      </div>
+                      </button>
+
+                      {/* Expanded Order Items */}
+                      <motion.div
+                        initial={{ height: 0, opacity: 0 }}
+                        animate={{ height: expandedOrderId === order._id ? "auto" : 0, opacity: expandedOrderId === order._id ? 1 : 0 }}
+                        transition={{ duration: 0.2 }}
+                        className="overflow-hidden border-t border-secondary/10"
+                      >
+                        <div className="p-5 md:p-6 bg-surface/30 space-y-3">
+                          <p className="text-[10px] text-secondary uppercase font-bold tracking-widest mb-4">Order Items</p>
+                          {order.items && order.items.length > 0 ? (
+                            order.items.map((item, idx) => (
+                              <div key={idx} className="flex items-start justify-between p-3 bg-surface rounded-lg border border-secondary/10">
+                                <div className="flex gap-3 flex-1 min-w-0">
+                                  {item.image && (
+                                    <img 
+                                      src={item.image} 
+                                      alt={item.name}
+                                      className="w-12 h-12 object-cover rounded-lg shrink-0"
+                                    />
+                                  )}
+                                  <div className="min-w-0 flex-1">
+                                    <p className="text-sm font-semibold text-primary truncate">{item.name}</p>
+                                    <p className="text-xs text-secondary mt-1">{formatINR(item.price)} × {item.quantity}</p>
+                                  </div>
+                                </div>
+                                <div className="text-right ml-2 shrink-0">
+                                  <p className="text-sm font-bold text-primary">{formatINR(item.price * item.quantity)}</p>
+                                  <p className="text-xs text-secondary">Qty: {item.quantity}</p>
+                                </div>
+                              </div>
+                            ))
+                          ) : (
+                            <p className="text-xs text-secondary">No items found</p>
+                          )}
+                          <div className="border-t border-secondary/10 pt-3 mt-3 flex justify-between items-center">
+                            <p className="text-xs font-bold text-secondary uppercase tracking-widest">Total</p>
+                            <p className="text-lg font-bold text-primary">{formatINR(order.totalAmount)}</p>
+                          </div>
+                        </div>
+                      </motion.div>
                     </motion.div>
                   ))}
                 </div>
@@ -179,7 +237,7 @@ const Profile = () => {
             <div className="vexo-card p-6 md:p-8 bg-primary text-background overflow-hidden relative group rounded-[2rem]">
               <div className="relative z-10">
                 <h2 className="text-xl font-bold mb-2 tracking-tight">Need help?</h2>
-                <p className="text-background/70 text-sm mb-6 leading-relaxed">Our concierge team is available 24/7 for our premium members.</p>
+                <p className="text-background/90 text-sm mb-6 leading-relaxed">Our concierge team is available 24/7 for our premium members.</p>
                 <button className="bg-background text-primary px-8 py-3.5 text-[10px] font-bold uppercase tracking-widest hover:bg-accent transition-colors rounded-xl">
                   Contact Support
                 </button>
