@@ -322,14 +322,6 @@ GuleAsr/
    - Update order status
    - Process refunds
 
-### Test Credentials
-
-```
-Email: admin@example.com
-Password: admin123
-(Create via: node scripts/createAdmin.js)
-```
-
 ## API Endpoints
 
 ### Authentication
@@ -410,94 +402,13 @@ POST   /api/uploads              - Upload product image (Admin only)
 
 ## Deployment
 
-### Frontend Deployment (Vercel)
+### Frontend is deployed on Vercel
 
-1. Push code to GitHub
-2. Connect repository to Vercel
-3. Set environment variables in Vercel dashboard
-4. Auto-deploy on push
+### Backend is deployed on Render
 
-```bash
-npm run build  # Creates optimized production build
-```
+### Database is deployed on MongoDB Atlas
 
-### Backend Deployment (Render/Railway)
 
-1. Create account on Render or Railway
-2. Connect GitHub repository
-3. Set environment variables
-4. Deploy
-
-**Important**: Ensure MongoDB Atlas connection string allows your deployment server IP.
-
-### Database Deployment (MongoDB Atlas)
-
-1. Create cluster on MongoDB Atlas
-2. Create database user with strong password
-3. Whitelist deployment server IP
-4. Copy connection string to `.env`
-
-## Troubleshooting
-
-### Backend Issues
-
-**Problem**: `ECONNREFUSED` on MongoDB connection
-```
-Solution: 
-- Check MONGO_URI in .env
-- Ensure MongoDB Atlas IP whitelist includes your IP
-- Verify database credentials
-```
-
-**Problem**: JWT token errors
-```
-Solution:
-- Ensure JWT_SECRET is set in .env
-- Verify token is sent in Authorization header: "Bearer <token>"
-```
-
-**Problem**: Port already in use
-```
-Solution:
-- Change PORT in .env to different port (e.g., 5001)
-- Or kill process using port: npx kill-port 5000
-```
-
-### Frontend Issues
-
-**Problem**: API calls returning 404
-```
-Solution:
-- Verify VITE_API_URL matches backend URL
-- Check backend server is running
-- Restart frontend: npm run dev
-```
-
-**Problem**: Images not loading
-```
-Solution:
-- Ensure uploads directory exists
-- Check upload middleware configuration
-- Verify file permissions
-```
-
-**Problem**: Build errors
-```
-Solution:
-- Clear node_modules: rm -rf node_modules
-- Reinstall dependencies: npm install
-- Clear Vite cache: rm -rf dist
-```
-
-### Payment Issues
-
-**Problem**: Razorpay signature verification fails
-```
-Solution:
-- Verify RAZORPAY_KEY_ID and RAZORPAY_KEY_SECRET are correct
-- Ensure order ID and payment ID match Razorpay response
-- Check test vs. production keys
-```
 
 ## Contributing
 
@@ -535,26 +446,7 @@ We welcome contributions! To contribute:
    - Reference any related issues
    - Include screenshots if UI changes
 
-### Code Style Guidelines
-- Use consistent naming conventions (camelCase for JS, kebab-case for CSS)
-- Write descriptive commit messages
-- Comment complex business logic
-- Keep functions small and focused
 
-### Reporting Issues
-- Use GitHub Issues to report bugs
-- Include detailed description and steps to reproduce
-- Attach screenshots/logs if applicable
-
-## Additional Resources
-
-- [React Documentation](https://react.dev/)
-- [Express.js Guide](https://expressjs.com/)
-- [MongoDB Documentation](https://docs.mongodb.com/)
-- [Razorpay Integration Guide](https://razorpay.com/docs/)
-- [Tailwind CSS Documentation](https://tailwindcss.com/docs/)
-
----
 
 <div align="center">
 
