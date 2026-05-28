@@ -47,7 +47,6 @@ const verifyRazorpayPayment = asyncHandler(async (req, res) => {
     throw new Error("Payment signature verification failed");
   }
 
-  // Update order with payment details
   const order = await Order.findOne({ razorpayOrderId: razorpay_order_id, user: req.user._id });
   if (order) {
     order.paymentStatus = "paid";
