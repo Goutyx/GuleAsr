@@ -8,21 +8,6 @@
 ![Tailwind CSS](https://img.shields.io/badge/Tailwind%20CSS-06b6d4?style=flat-square&logo=tailwindcss)
 ![License](https://img.shields.io/badge/License-Proprietary-red?style=flat-square)
 
-## Table of Contents
-
-- [About](#about)
-- [Features](#features)
-- [Tech Stack](#tech-stack)
-- [Prerequisites](#prerequisites)
-- [Installation](#installation)
-- [Project Structure](#project-structure)
-- [Usage](#usage)
-- [API Endpoints](#api-endpoints)
-- [Environment Variables](#environment-variables)
-- [Deployment](#deployment)
-- [Troubleshooting](#troubleshooting)
-- [Contributing](#contributing)
-
 ## About
 
 GuleAsr is a full-featured e-commerce platform designed specifically for premium perfume sales. Built with the MERN stack, it combines a modern React frontend with a robust Express backend, offering a seamless shopping experience with features like real-time cart management, secure payment processing via Razorpay, and a comprehensive admin dashboard for inventory and sales analytics.
