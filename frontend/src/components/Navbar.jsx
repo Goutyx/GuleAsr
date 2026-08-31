@@ -55,8 +55,8 @@ const Navbar = () => {
             <img
               src="/10.png"
               alt="GuleAsr"
-              className="h-20 md:h-28 object-contain filter drop-shadow-2xl"
-              style={{ maxWidth: "320px" }}
+              className="h-24 md:h-32 object-contain filter drop-shadow-2xl"
+              style={{ maxWidth: "380px" }}
           />
           </Link>
 
