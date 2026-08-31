@@ -4,7 +4,6 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Link, useLocation } from "react-router-dom";
 import { useCart } from "../context/CartContext";
 import { useAuth } from "../context/AuthContext";
-import logo from "frontend/public/10.png";
 
 const Navbar = () => {
   const { toggleCart, getCartCount } = useCart();
@@ -54,11 +53,11 @@ const Navbar = () => {
           {/* Logo */}
           <Link to="/" className="flex-shrink-0">
             <img
-              src={logo}
+              src="/10.png"
               alt="GuleAsr"
               className="h-20 md:h-28 object-contain filter drop-shadow-2xl"
               style={{ maxWidth: "320px" }}
-            />
+          />
           </Link>
 
           {/* Right: Icons */}
