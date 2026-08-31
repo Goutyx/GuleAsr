@@ -4,7 +4,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Link, useLocation } from "react-router-dom";
 import { useCart } from "../context/CartContext";
 import { useAuth } from "../context/AuthContext";
-import logo from "../assets/10.png";
+import logo from "frontend/public/10.png";
 
 const Navbar = () => {
   const { toggleCart, getCartCount } = useCart();
