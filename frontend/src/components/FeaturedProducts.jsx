@@ -58,9 +58,9 @@ const FeaturedProducts = () => {
                   />
                   <div className="absolute top-4 right-4 z-20">
                     <button
-                      onClick={(e) => { 
-                        e.preventDefault(); 
-                        const success = addToCart(product);
+                      onClick={async (e) => {
+                        e.preventDefault();
+                        const success = await addToCart(product);
                         if (!success) {
                           navigate("/login");
                         }
@@ -128,9 +128,9 @@ const FeaturedProducts = () => {
                 />
                 <div className="absolute top-3 right-3 z-20">
                   <button
-                    onClick={(e) => { 
-                      e.preventDefault(); 
-                      const success = addToCart(product);
+                    onClick={async (e) => {
+                      e.preventDefault();
+                      const success = await addToCart(product);
                       if (!success) {
                         navigate("/login");
                       }

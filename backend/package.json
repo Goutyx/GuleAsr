@@ -4,8 +4,10 @@
   "description": "GuleAsr backend API",
   "main": "server.js",
   "scripts": {
+    "start": "node server.js",
     "dev": "node server.js",
     "seed:products": "node scripts/seedProducts.js",
+    "seed:admin": "node scripts/createAdmin.js",
     "test": "echo \"No tests configured\""
   },
   "keywords": [],

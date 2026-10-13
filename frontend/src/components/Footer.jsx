@@ -72,7 +72,7 @@ const Footer = () => {
               { label: 'For Him', to: '/shop' },
               { label: 'For Her', to: '/shop' },
               { label: 'Perfume Oils', to: '/shop' },
-              { label: 'Our Story', to: '/#story' },
+              { label: 'Our Story', to: '/our-story' },
             ].map(link => (
               <li key={link.label}>
                 <Link to={link.to} className="text-background/80 hover:text-background transition-colors">

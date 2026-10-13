@@ -33,9 +33,13 @@ const login = asyncHandler(async (req, res) => {
   validate(req);
   const { email, password } = req.body;
   const user = await User.findOne({ email });
-  if (!user || !(await user.comparePassword(password))) {
+  if (!user) {
+    res.status(404);
+    throw new Error("No account found with this email. Please register first.");
+  }
+  if (!(await user.comparePassword(password))) {
     res.status(401);
-    throw new Error("Invalid email or password");
+    throw new Error("Incorrect password. Please try again.");
   }
   res.json({
     token: generateToken(user._id),

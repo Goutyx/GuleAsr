@@ -1,6 +1,6 @@
 import React, { createContext, useState, useContext, useEffect } from 'react';
 import toast from "react-hot-toast";
-import { cartApi, wishlistApi } from "../services/api";
+import { cartApi } from "../services/api";
 import { useAuth } from './AuthContext';
 
 const CartContext = createContext();
@@ -11,7 +11,6 @@ export const CartProvider = ({ children }) => {
   const { user } = useAuth();
   const [cartItems, setCartItems] = useState([]);
   const [isCartOpen, setIsCartOpen] = useState(false);
-  const [wishlist, setWishlist] = useState([]);
 
   const normalizeCartItem = (entry) => ({
     id: entry.product?._id || entry.id,
@@ -33,76 +32,93 @@ export const CartProvider = ({ children }) => {
     }
   };
 
-  const syncWishlist = async () => {
-    const token = localStorage.getItem("guleasr_token");
-    if (!token) return;
-    try {
-      const { data } = await wishlistApi.get();
-      setWishlist(data.products || []);
-    } catch {
-      // Keep local state if unavailable.
-    }
-  };
-
-  // Sync cart and wishlist when user logs in or page first loads with auth token
+  // Sync cart when user logs in or page first loads with auth token
   useEffect(() => {
     syncServerCart();
-    syncWishlist();
   }, [user]);
 
-  const addToCart = (product, quantity = 1) => {
+  const addToCart = async (product, quantity = 1) => {
     if (!user) {
       toast.error("Please login to add items to cart");
       return false;
     }
+
+    // Guard: a real MongoDB ObjectId is 24 hex chars. Fallback products have
+    // _id like "1" or "2" — refuse to push those to the backend cart.
+    const hasRealId = typeof product._id === "string" && /^[a-f0-9]{24}$/i.test(product._id);
+    if (!hasRealId) {
+      toast.error("This product is not available for purchase yet.");
+      return false;
+    }
+
     const normalized = {
-      id: product._id || product.id,
+      id: product._id,
       name: product.name,
       category: product.category,
       price: Number(product.price),
       image: product.images?.[0] || product.image,
       quantity,
     };
+
+    // Optimistic local update so UI feels instant
     setCartItems(prev => {
       const existing = prev.find(item => item.id === normalized.id);
       if (existing) {
-        return prev.map(item => 
+        return prev.map(item =>
           item.id === normalized.id ? { ...item, quantity: item.quantity + quantity } : item
         );
       }
       return [...prev, normalized];
     });
-    if (product._id) cartApi.add(product._id, quantity).catch(() => {});
+
+    // Persist to backend BEFORE claiming success so checkout can rely on it
+    try {
+      await cartApi.add(product._id, quantity);
+    } catch (err) {
+      // Roll back the optimistic update
+      setCartItems(prev => {
+        const existing = prev.find(item => item.id === normalized.id);
+        if (existing && (existing.quantity || 0) <= quantity) {
+          return prev.filter(item => item.id !== normalized.id);
+        }
+        return prev.map(item =>
+          item.id === normalized.id ? { ...item, quantity: item.quantity - quantity } : item
+        );
+      });
+      toast.error(err.response?.data?.message || "Failed to add to cart");
+      return false;
+    }
+
     toast.success("Added to cart");
     setIsCartOpen(true);
     return true;
   };
 
-  const removeFromCart = (productId) => {
+  const removeFromCart = async (productId) => {
+    const previous = cartItems;
     setCartItems(prev => prev.filter(item => item.id !== productId));
-    cartApi.remove(productId).catch(() => {});
+    try {
+      await cartApi.remove(productId);
+    } catch (err) {
+      // Roll back on failure
+      setCartItems(previous);
+      toast.error(err.response?.data?.message || "Failed to remove item");
+    }
   };
 
-  const updateQuantity = (productId, newQuantity) => {
+  const updateQuantity = async (productId, newQuantity) => {
     if (newQuantity < 1) return;
-    setCartItems(prev => prev.map(item => 
+    const previous = cartItems;
+    setCartItems(prev => prev.map(item =>
       item.id === productId ? { ...item, quantity: newQuantity } : item
     ));
-    cartApi.update(productId, newQuantity).catch(() => {});
-  };
-
-  const toggleWishlist = async (productId) => {
-    const token = localStorage.getItem("guleasr_token");
-    if (!token) {
-      toast.error("Please login to use wishlist");
-      return;
+    try {
+      await cartApi.update(productId, newQuantity);
+    } catch (err) {
+      setCartItems(previous);
+      toast.error(err.response?.data?.message || "Failed to update quantity");
     }
-    const { data } = await wishlistApi.toggle(productId);
-    setWishlist(data.products || []);
   };
-
-  const isInWishlist = (productId) =>
-    wishlist.some((item) => String(item._id || item.id) === String(productId));
 
   const toggleCart = () => setIsCartOpen(!isCartOpen);
 
@@ -128,9 +144,6 @@ export const CartProvider = ({ children }) => {
       toggleCart,
       getCartTotal,
       getCartCount,
-      wishlist,
-      toggleWishlist,
-      isInWishlist
     }}>
       {children}
     </CartContext.Provider>

@@ -5,7 +5,7 @@ import { Link } from 'react-router-dom';
 import { ArrowLeft, CheckCircle2 } from 'lucide-react';
 import toast from "react-hot-toast";
 import { formatINR } from "../utils/currency";
-import { orderApi, paymentApi } from "../services/api";
+import { orderApi, paymentApi, cartApi } from "../services/api";
 
 const Checkout = () => {
   const { cartItems, getCartTotal, cartItems: items, removeFromCart } = useCart();
@@ -33,17 +33,21 @@ const Checkout = () => {
       document.body.appendChild(script);
     });
 
-  const createOrderAfterPayment = async (paymentStatus, razorpayOrderId = null) => {
+  const placeCodOrder = async () => {
     try {
       setIsLoading(true);
+      const serverCart = await cartApi.get();
+      if (!serverCart.data?.items?.length) {
+        toast.error("Your cart is empty or not synced. Please re-add items and try again.");
+        setIsLoading(false);
+        return;
+      }
       await orderApi.create({
         shippingAddress: formData,
-        paymentMethod,
-        paymentStatus,
-        razorpayOrderId,
+        paymentMethod: "COD",
+        paymentStatus: "pending",
       });
-      // Clear cart items after successful order creation
-      cartItems.forEach(item => removeFromCart(item.id));
+      await Promise.all(cartItems.map((item) => removeFromCart(item.id)));
       setIsSubmitted(true);
       toast.success("Order placed successfully!");
     } catch (error) {
@@ -52,35 +56,29 @@ const Checkout = () => {
     }
   };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    if (!cartItems.length) {
-      toast.error("Your cart is empty");
-      return;
-    }
-    if (!localStorage.getItem("guleasr_token") && !localStorage.getItem("guleasr_mock_session")) {
-      toast.error("Please login before checkout");
-      return;
-    }
-    // Validate form
-    if (!formData.name || !formData.email || !formData.phone || !formData.line1 || !formData.city || !formData.postalCode || !formData.state) {
-      toast.error("Please fill all fields");
-      return;
-    }
-    
+  const placeOnlineOrder = async () => {
     try {
-      setIsLoading(true);
-      if (paymentMethod === "COD") {
-        await createOrderAfterPayment("pending");
-        return;
-      }
-      const ready = await loadRazorpay();
-      if (!ready) {
-        toast.error("Unable to load payment gateway");
+      // 1. Make sure the server cart is in sync before creating an order
+      const serverCart = await cartApi.get();
+      if (!serverCart.data?.items?.length) {
+        toast.error("Your cart is empty or not synced. Please re-add items and try again.");
         setIsLoading(false);
         return;
       }
+
+      // 2. Create the Razorpay order (gives us a razorpay_order_id)
       const { data } = await paymentApi.createOrder(getCartTotal());
+
+      // 3. Pre-create our order in the DB with paymentStatus: "pending" and the razorpayOrderId
+      //    so the verify endpoint has something to update
+      const { data: order } = await orderApi.create({
+        shippingAddress: formData,
+        paymentMethod,
+        paymentStatus: "pending",
+        razorpayOrderId: data.order.id,
+      });
+
+      // 4. Open Razorpay
       const options = {
         key: data.key,
         amount: data.order.amount,
@@ -90,12 +88,25 @@ const Checkout = () => {
         order_id: data.order.id,
         handler: async (response) => {
           try {
+            // 5. Verify signature + update order.paymentStatus to "paid" server-side
             await paymentApi.verify(response);
-            await createOrderAfterPayment("paid", data.order.id);
+            await Promise.all(cartItems.map((item) => removeFromCart(item.id)));
+            setIsSubmitted(true);
+            toast.success("Payment successful! Order placed.");
           } catch (error) {
-            toast.error("Payment verification failed");
+            toast.error("Payment verification failed. Please contact support.");
             setIsLoading(false);
           }
+        },
+        modal: {
+          // 6. If user closes the popup without paying, mark the order as failed
+          ondismiss: async () => {
+            try {
+              await paymentApi.markFailed(data.order.id);
+            } catch {}
+            setIsLoading(false);
+            toast("Payment cancelled. Your order was not completed.");
+          },
         },
         prefill: { name: formData.name, email: formData.email, contact: formData.phone },
         theme: { color: "#967D6A" },
@@ -106,6 +117,37 @@ const Checkout = () => {
       toast.error(error.response?.data?.message || "Failed to process payment");
       setIsLoading(false);
     }
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    if (!cartItems.length) {
+      toast.error("Your cart is empty");
+      return;
+    }
+    if (!localStorage.getItem("guleasr_token")) {
+      toast.error("Please login before checkout");
+      return;
+    }
+    if (!formData.name || !formData.email || !formData.phone || !formData.line1 || !formData.city || !formData.postalCode || !formData.state) {
+      toast.error("Please fill all fields");
+      return;
+    }
+
+    setIsLoading(true);
+
+    if (paymentMethod === "COD") {
+      await placeCodOrder();
+      return;
+    }
+
+    const ready = await loadRazorpay();
+    if (!ready) {
+      toast.error("Unable to load payment gateway");
+      setIsLoading(false);
+      return;
+    }
+    await placeOnlineOrder();
   };
 
   if (isSubmitted) {

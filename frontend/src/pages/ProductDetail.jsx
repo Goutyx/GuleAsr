@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { ArrowLeft, ShoppingBag, Zap, Clock, Tag, Plus, Heart } from 'lucide-react';
+import { ArrowLeft, ShoppingBag, Zap, Clock, Tag, Plus } from 'lucide-react';
 import { useCart } from '../context/CartContext';
 import { productApi } from "../services/api";
 import { formatINR } from "../utils/currency";
@@ -10,7 +10,7 @@ import { useNavigate } from "react-router-dom";
 
 const ProductDetail = () => {
   const { id } = useParams();
-  const { addToCart, toggleWishlist, isInWishlist } = useCart();
+  const { addToCart } = useCart();
   const navigate = useNavigate();
   const [product, setProduct] = useState(null);
   const [recommendations, setRecommendations] = useState([]);
@@ -147,40 +147,40 @@ const ProductDetail = () => {
               </div>
 
               {/* Action Buttons */}
-              <div className="flex flex-col sm:flex-row gap-4 max-w-md">
-                <button 
-                  onClick={() => {
-                    const success = addToCart(product);
-                    if (!success) {
-                      navigate("/login");
-                    }
-                  }}
-                  className="vexo-btn flex-1 py-5 flex items-center justify-center gap-3 uppercase text-[10px] tracking-widest font-bold"
-                >
-                  <ShoppingBag size={18} /> Add to Cart
-                </button>
-                <button
-                  onClick={() => {
-                    const success = addToCart(product);
-                    if (success) {
-                      navigate("/checkout");
-                    } else {
-                      navigate("/login");
-                    }
-                  }}
-                  className="flex-1 py-5 bg-primary text-background flex items-center justify-center gap-3 uppercase text-[10px] tracking-widest font-bold hover:bg-secondary transition-all rounded-full"
-                >
-                  <Zap size={18} /> Buy Now
-                </button>
-                <button 
-                  onClick={() => {
-                    toggleWishlist(product.id);
-                  }} 
-                  className="flex-1 py-5 bg-surface text-primary flex items-center justify-center gap-3 uppercase text-[10px] tracking-widest font-bold hover:bg-primary/10 transition-all rounded-full border border-secondary/20"
-                >
-                  <Heart size={18} className={isInWishlist(product.id) ? "fill-primary" : ""} /> Wishlist
-                </button>
-              </div>
+              {product._id ? (
+                <div className="flex flex-col sm:flex-row gap-3 max-w-md">
+                  <button
+                    onClick={async () => {
+                      const success = await addToCart(product);
+                      if (!success) {
+                        navigate("/login");
+                      }
+                    }}
+                    className="flex-1 h-12 px-6 flex items-center justify-center gap-2 text-[11px] uppercase tracking-[0.2em] font-semibold bg-primary text-background hover:bg-accent transition-colors rounded-full"
+                  >
+                    <ShoppingBag size={14} strokeWidth={2} /> Add to Cart
+                  </button>
+                  <button
+                    onClick={async () => {
+                      const success = await addToCart(product);
+                      if (success) {
+                        navigate("/checkout");
+                      } else {
+                        navigate("/login");
+                      }
+                    }}
+                    className="flex-1 h-12 px-6 flex items-center justify-center gap-2 text-[11px] uppercase tracking-[0.2em] font-semibold bg-transparent text-primary border border-primary hover:bg-primary hover:text-background transition-colors rounded-full"
+                  >
+                    <Zap size={14} strokeWidth={2} /> Buy Now
+                  </button>
+                </div>
+              ) : (
+                <div className="max-w-md p-4 border border-secondary/20 rounded-2xl bg-surface/40">
+                  <p className="text-xs uppercase tracking-widest font-bold text-secondary text-center">
+                    Currently unavailable for online purchase
+                  </p>
+                </div>
+              )}
             </motion.div>
           </div>
         </div>
@@ -215,10 +215,10 @@ const ProductDetail = () => {
                       className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out"
                     />
                     <div className="absolute top-4 right-4 translate-y-2 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all hidden md:flex">
-                       <button 
-                        onClick={(e) => { 
-                          e.preventDefault(); 
-                          const success = addToCart(item);
+                       <button
+                        onClick={async (e) => {
+                          e.preventDefault();
+                          const success = await addToCart(item);
                           if (!success) {
                             navigate("/login");
                           }

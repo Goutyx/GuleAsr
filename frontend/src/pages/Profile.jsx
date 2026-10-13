@@ -3,13 +3,11 @@ import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import { orderApi } from "../services/api";
 import { useAuth } from "../context/AuthContext";
-import { useCart } from "../context/CartContext";
 import { formatINR } from "../utils/currency";
-import { User, Package, Heart, LogOut, Settings, ChevronRight, Clock, ChevronDown } from "lucide-react";
+import { User, Package, LogOut, Settings, ChevronRight, Clock, ChevronDown } from "lucide-react";
 
 const Profile = () => {
   const { user, isAuthenticated, logout } = useAuth();
-  const { wishlist } = useCart();
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
   const [expandedOrderId, setExpandedOrderId] = useState(null);
@@ -35,7 +33,7 @@ const Profile = () => {
             <User size={40} className="text-secondary" />
           </div>
           <h2 className="text-3xl font-bold text-primary mb-4">Account Access</h2>
-          <p className="text-secondary mb-8 max-w-xs mx-auto">Please login to view your orders, wishlist and personal preferences.</p>
+          <p className="text-secondary mb-8 max-w-xs mx-auto">Please login to view your orders and personal preferences.</p>
           <Link to="/login" className="bg-primary text-background px-10 py-4 font-bold uppercase tracking-widest hover:bg-accent transition-colors inline-block">
             Login Now
           </Link>
@@ -48,7 +46,6 @@ const Profile = () => {
 
   const stats = [
     { label: "Orders", value: orders.length, icon: <Package size={20} />, color: "bg-blue-500/10 text-blue-500" },
-    { label: "Wishlist", value: wishlist.length, icon: <Heart size={20} />, color: "bg-rose-500/10 text-rose-500" },
     { label: "Loyalty Tier", value: "Premium", icon: <Settings size={20} />, color: "bg-amber-500/10 text-amber-500" },
   ];
 

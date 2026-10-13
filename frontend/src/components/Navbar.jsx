@@ -14,7 +14,7 @@ const Navbar = () => {
   const navLinks = [
     { name: "Home", path: "/" },
     { name: "Shop", path: "/shop" },
-    { name: "Our Story", path: "#story" },
+    { name: "Our Story", path: "/our-story" },
   ];
 
   return (
@@ -51,13 +51,12 @@ const Navbar = () => {
           </div>
 
           {/* Logo */}
-          <Link to="/" className="flex-shrink-0">
-            <img
-              src="/10.png"
-              alt="GuleAsr"
-              className="h-20 md:h-28 object-contain filter drop-shadow-2xl"
-              style={{ maxWidth: "320px" }}
-          />
+          <Link
+            to="/"
+            className="flex-shrink-0 font-black tracking-[0.25em] text-primary text-xl md:text-2xl select-none"
+            style={{ fontFamily: "'Inter', 'Helvetica Neue', Arial, sans-serif", letterSpacing: "0.3em" }}
+          >
+            GULEASR
           </Link>
 
           {/* Right: Icons */}
@@ -112,11 +111,12 @@ const Navbar = () => {
             className="fixed inset-0 z-[100] bg-background flex flex-col p-8 md:hidden"
           >
             <div className="flex justify-between items-center mb-16">
-              <img
-                src={logo}
-                alt="GuleAsr"
-                className="h-20 md:h-22 object-contain drop-shadow-xl"
-              />
+              <span
+                className="font-black tracking-[0.3em] text-primary text-2xl"
+                style={{ fontFamily: "'Inter', 'Helvetica Neue', Arial, sans-serif" }}
+              >
+                GULEASR
+              </span>
               <button
                 onClick={() => setIsMobileMenuOpen(false)}
                 className="text-primary"

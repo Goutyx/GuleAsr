@@ -4,7 +4,11 @@ const notFound = (req, res, next) => {
 };
 
 const errorHandler = (err, req, res, next) => {
-  const statusCode = res.statusCode && res.statusCode !== 200 ? res.statusCode : 500;
+  // Prefer err.statusCode (set by controllers like authController.validate)
+  // Fall back to res.statusCode for cases where it was set on the response directly
+  const statusCode =
+    err.statusCode ||
+    (res.statusCode && res.statusCode !== 200 ? res.statusCode : 500);
   res.status(statusCode).json({
     message: err.message || "Server error",
     stack: process.env.NODE_ENV === "production" ? undefined : err.stack,

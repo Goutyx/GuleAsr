@@ -6,21 +6,6 @@ const AuthContext = createContext(null);
 
 export const useAuth = () => useContext(AuthContext);
 
-const MOCK_USERS_KEY = "guleasr_mock_users";
-const MOCK_SESSION_KEY = "guleasr_mock_session";
-
-const readMockUsers = () => {
-  try {
-    return JSON.parse(localStorage.getItem(MOCK_USERS_KEY) || "[]");
-  } catch {
-    return [];
-  }
-};
-
-const writeMockUsers = (users) => {
-  localStorage.setItem(MOCK_USERS_KEY, JSON.stringify(users));
-};
-
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -31,7 +16,6 @@ export const AuthProvider = ({ children }) => {
       setUser(data);
     } catch {
       localStorage.removeItem("guleasr_token");
-      localStorage.removeItem(MOCK_SESSION_KEY);
       setUser(null);
     } finally {
       setLoading(false);
@@ -45,7 +29,6 @@ export const AuthProvider = ({ children }) => {
   const login = async (payload) => {
     const { data } = await authApi.login(payload);
     localStorage.setItem("guleasr_token", data.token);
-    localStorage.removeItem(MOCK_SESSION_KEY);
     setUser(data.user);
     toast.success("Welcome back");
     return data.user;
@@ -54,14 +37,12 @@ export const AuthProvider = ({ children }) => {
   const register = async (payload) => {
     const { data } = await authApi.register(payload);
     localStorage.setItem("guleasr_token", data.token);
-    localStorage.removeItem(MOCK_SESSION_KEY);
     setUser(data.user);
     toast.success("Account created");
   };
 
   const logout = () => {
     localStorage.removeItem("guleasr_token");
-    localStorage.removeItem(MOCK_SESSION_KEY);
     setUser(null);
     toast.success("Signed out");
   };

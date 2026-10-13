@@ -128,10 +128,10 @@ const Shop = () => {
                   className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out"
                 />
                 <div className="absolute bottom-4 right-4 z-20">
-                  <button 
-                    onClick={(e) => {
+                  <button
+                    onClick={async (e) => {
                       e.preventDefault();
-                      const success = addToCart(product);
+                      const success = await addToCart(product);
                       if (!success) {
                         navigate("/login");
                       }

@@ -47,15 +47,37 @@ const verifyRazorpayPayment = asyncHandler(async (req, res) => {
     throw new Error("Payment signature verification failed");
   }
 
+  // Order must already exist (created before Razorpay was opened) with paymentStatus: "pending"
   const order = await Order.findOne({ razorpayOrderId: razorpay_order_id, user: req.user._id });
-  if (order) {
-    order.paymentStatus = "paid";
-    order.razorpayPaymentId = razorpay_payment_id;
-    order.razorpaySignature = razorpay_signature;
-    await order.save();
+  if (!order) {
+    res.status(404);
+    throw new Error("Order not found for this payment");
   }
 
-  res.json({ verified: true });
+  order.paymentStatus = "paid";
+  order.razorpayPaymentId = razorpay_payment_id;
+  order.razorpaySignature = razorpay_signature;
+  await order.save();
+
+  res.json({ verified: true, orderId: order._id });
 });
 
-module.exports = { createRazorpayOrder, verifyRazorpayPayment };
+const markPaymentFailed = asyncHandler(async (req, res) => {
+  const { razorpay_order_id } = req.body;
+  if (!razorpay_order_id) {
+    res.status(400);
+    throw new Error("razorpay_order_id is required");
+  }
+  const order = await Order.findOne({ razorpayOrderId: razorpay_order_id, user: req.user._id });
+  if (!order) {
+    return res.json({ marked: false });
+  }
+  // Only mark as failed if it was still pending — don't overwrite a successful payment
+  if (order.paymentStatus === "pending") {
+    order.paymentStatus = "failed";
+    await order.save();
+  }
+  res.json({ marked: true });
+});
+
+module.exports = { createRazorpayOrder, verifyRazorpayPayment, markPaymentFailed };

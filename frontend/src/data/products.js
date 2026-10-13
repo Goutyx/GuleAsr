@@ -144,15 +144,20 @@ export const fallbackProducts = [
   },
 ];
 
-export const toCardProduct = (product) => ({
-  id: String(product._id || product.id),
-  _id: String(product._id || product.id),
-  name: product.name,
-  category: product.category,
-  families: product.families || [],
-  type: product.type,
-  price: Number(product.price),
-  image: product.image || product.images?.[0],
-  images: product.images || [product.image],
-  description: product.description,
-});
+export const toCardProduct = (product) => {
+  // Only assign _id if the source actually has a MongoDB ObjectId
+  // (fallback products have id: "1", "2", etc. which would break cart calls)
+  const hasRealId = !!product._id;
+  return {
+    id: String(product._id || product.id),
+    _id: hasRealId ? String(product._id) : undefined,
+    name: product.name,
+    category: product.category,
+    families: product.families || [],
+    type: product.type,
+    price: Number(product.price),
+    image: product.image || product.images?.[0],
+    images: product.images || [product.image],
+    description: product.description,
+  };
+};

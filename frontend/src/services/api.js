@@ -13,27 +13,19 @@ api.interceptors.request.use((config) => {
   return config;
 });
 
-// Handle response errors - particularly 401 for token expiry
+// Handle 401 by clearing the session and redirecting to login
 api.interceptors.response.use(
   (response) => response,
   (error) => {
     if (error.response?.status === 401) {
-      // Only handle logout if there was a real token (not mock session)
       const hasToken = localStorage.getItem("guleasr_token");
-      const hasMockSession = localStorage.getItem("guleasr_mock_session");
-      
       if (hasToken) {
-        // Token expired or invalid - do full logout
         localStorage.removeItem("guleasr_token");
-        localStorage.removeItem("guleasr_mock_session");
         window.dispatchEvent(new CustomEvent("logout", { detail: { reason: "Token expired" } }));
         if (!window.location.pathname.includes("/login")) {
           toast.error("Session expired. Please login again.");
           window.location.href = "/login";
         }
-      } else if (hasMockSession) {
-        // In mock mode, just silently fail the request without logging out
-        // The AuthContext will handle the fallback to mock session
       }
     }
     return Promise.reject(error);
@@ -58,11 +50,6 @@ export const cartApi = {
   remove: (productId) => api.delete(`/cart/${productId}`),
 };
 
-export const wishlistApi = {
-  get: () => api.get("/wishlist"),
-  toggle: (productId) => api.post("/wishlist/toggle", { productId }),
-};
-
 export const orderApi = {
   create: (payload) => api.post("/orders", payload),
   myOrders: () => api.get("/orders/my"),
@@ -71,6 +58,7 @@ export const orderApi = {
 export const paymentApi = {
   createOrder: (amount) => api.post("/payments/create-order", { amount }),
   verify: (payload) => api.post("/payments/verify", payload),
+  markFailed: (razorpayOrderId) => api.post("/payments/failed", { razorpay_order_id: razorpayOrderId }),
 };
 
 export const adminApi = {

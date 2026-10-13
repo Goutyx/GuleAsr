@@ -9,6 +9,7 @@ import Login from './pages/Login';
 import Register from './pages/Register';
 import Profile from "./pages/Profile";
 import AdminDashboard from "./pages/AdminDashboard";
+import OurStory from "./pages/OurStory";
 import Cart from './components/Cart';
 import Footer from './components/Footer';
 import ProtectedRoute from './components/ProtectedRoute';
@@ -22,6 +23,7 @@ function App() {
       <main className="flex-1">
         <Routes>
           <Route path="/" element={<Home />} />
+          <Route path="/our-story" element={<OurStory />} />
           <Route path="/shop" element={<Shop />} />
           <Route path="/product/:id" element={<ProductDetail />} />
           <Route path="/checkout" element={<ProtectedRoute><Checkout /></ProtectedRoute>} />
